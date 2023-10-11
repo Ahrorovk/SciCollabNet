@@ -127,7 +127,7 @@ class MainViewModel @Inject constructor(
     private fun getProjectByCategories() {
         val categoriesName = mutableListOf<String>()
         _state.value.changedCategories.forEach {
-            categoriesName.add(it.name)
+            categoriesName.add(it.slug)
         }
         getProjectByCategoryUseCase.invoke(
             token = "Bearer ${_state.value.accessToken}",

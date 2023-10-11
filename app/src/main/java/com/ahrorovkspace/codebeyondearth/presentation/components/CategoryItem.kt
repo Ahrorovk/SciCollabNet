@@ -38,8 +38,9 @@ fun CategoryItem(
     val openDialog = remember { mutableStateOf(false) }
     val selectedItems = remember { mutableStateListOf<Children>() }
 
-    LaunchedEffect(changedCategories) {
-        Log.e("TAG", "CONNECTEDIds->\n$changedCategories")
+
+    LaunchedEffect(key1 = changedCategories){
+        selectedItems.clear()
         selectedItems.addAll(changedCategories)
     }
     Box(
@@ -50,9 +51,9 @@ fun CategoryItem(
         Column {
             ProjectCategoryItem(name = parentName,
                 modifier = modifier
-                .clickable {
-                    openDialog.value = true
-                })
+                    .clickable {
+                        openDialog.value = true
+                    })
             DropdownMenu(
                 expanded = openDialog.value,
                 onDismissRequest = { openDialog.value = false }
@@ -66,27 +67,29 @@ fun CategoryItem(
                                 Checkbox(
                                     checked = isSelected.value,
                                     colors = CheckboxDefaults.colors(Color(0x75000000)),
-                                    onCheckedChange = { isSelected.value = it }
+                                    onCheckedChange = {
+                                        isSelected.value = it
+                                        if (isSelected.value) {
+                                            selectedItems.add(item)
+                                        } else {
+                                            selectedItems.remove(item)
+                                        }
+                                    }
                                 )
 
                             }
                         },
                         onClick = {
-                            isSelected.value = !isSelected.value
-                            if (isSelected.value) {
-                                selectedItems.add(item)
-                            } else {
-                                selectedItems.remove(item)
-                            }
+
                         }
                     )
                 }
                 LaunchedEffect(selectedItems) {
-                    if (response) {
+                    Log.e("TAG", "SELECTED_ITEMS ${selectedItems.toList()}")
                         onSelectionChanged(selectedItems)
-                    }
                 }
             }
         }
     }
+
 }
